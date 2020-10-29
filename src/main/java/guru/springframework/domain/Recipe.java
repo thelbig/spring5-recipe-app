@@ -1,5 +1,7 @@
 package guru.springframework.domain;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -15,6 +17,8 @@ public class Recipe {
     private Integer servings;
     private String source;
     private String url;
+
+    @Type(type = "text")
     private String directions;
 
     @Lob
