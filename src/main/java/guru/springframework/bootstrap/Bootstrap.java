@@ -5,16 +5,19 @@ import guru.springframework.repositories.CategoryRepository;
 import guru.springframework.repositories.IngredientRepository;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Component
-public class Bootstrap implements CommandLineRunner {
+public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private CategoryRepository categoryRepository;
     private IngredientRepository ingredientRepository;
@@ -29,8 +32,8 @@ public class Bootstrap implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        System.out.println("Hello");
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        log.debug("Starting Bootstrap");
         createDataSql();
     }
 
@@ -81,9 +84,9 @@ public class Bootstrap implements CommandLineRunner {
 
         Recipe guacamole2 = new Recipe();
         guacamole2.setDescription("Perfect Guacamole 2");
-        guacamole2.setCookTime(10);
-        guacamole2.setDifficulty(Difficulty.EASY);
-        guacamole2.setServings(4);
+        guacamole2.setCookTime(15);
+        guacamole2.setDifficulty(Difficulty.MODERATE);
+        guacamole2.setServings(5);
         guacamole2.setSource("SimplyRecipes");
         guacamole2.setUrl("https://www.simplyrecipes.com/recipes/perfect_guacamole/");
         guacamole2.setDirections("1 Cut the avocado, remove flesh: Cut the avocados in half. Remove the pit. Score the inside of the avocado with a blunt knife and scoop out the flesh with a spoon. (See How to Cut and Peel an Avocado.) Place in a bowl.<br/>" +
