@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.debug("Starting Bootstrap");
         createDataSql();
@@ -71,16 +73,11 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         guacamoleCategories.add(findOrCreateCategoryByDescription("guacamole"));
         guacamole.setCategories(guacamoleCategories);
 
-        Set<Ingredient> guacamoleIngredients = new HashSet<>();
-
-        guacamoleIngredients.add(createIngredient("ripe avocados",2L, "Pieces", guacamole));
-        guacamoleIngredients.add(createIngredient("of salt, more to taste",1L, "Teaspoon", guacamole));
-        guacamoleIngredients.add(createIngredient("fresh lime juice or lemon juice",1L, "Tablespoon", guacamole));
-        guacamoleIngredients.add(createIngredient("of minced red onion or thinly sliced green onion",2L, "Tablespoons", guacamole));
-
-        guacamole.setIngredients(guacamoleIngredients);
+        guacamole.addIngredient(new Ingredient("ripe avocados",2L, unitOfMeasureRepository.findByDescription("Pieces").get()));
+        guacamole.addIngredient(new Ingredient("of salt, more to taste",2L, unitOfMeasureRepository.findByDescription("Teaspoon").get()));
+        guacamole.addIngredient(new Ingredient("fresh lime juice or lemon juice",2L, unitOfMeasureRepository.findByDescription("Tablespoon").get()));
+        guacamole.addIngredient(new Ingredient("of minced red onion or thinly sliced green onion",2L, unitOfMeasureRepository.findByDescription("Tablespoons").get()));
         recipeRepository.save(guacamole);
-
 
         Recipe guacamole2 = new Recipe();
         guacamole2.setDescription("Perfect Guacamole 2");
@@ -145,5 +142,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         }
         return savedCategory;
     }
+
 
 }
